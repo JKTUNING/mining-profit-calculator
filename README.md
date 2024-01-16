@@ -31,3 +31,11 @@ https://currentmillis.com/
   "scanEnd": 1703912400
 }
 ```
+
+## Install and Usage
+
+#### Please first create a config file by following the template in the section above.
+
+This javascript application requireds node version 18. Please install dependencies first by running `npm install`
+
+After the packages are done downloading then you can run the application by running the following command `npm start`
