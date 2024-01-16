@@ -4,6 +4,7 @@
   "description": "Parse blockchain for tx and price for mining profits",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JK",
