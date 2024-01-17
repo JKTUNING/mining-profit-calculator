@@ -44,4 +44,4 @@ https://currentmillis.com/
 
 This javascript application requireds node version 18. Please install dependencies first by running `npm install`
 
-After the packages are done downloading then you can run the application by running the following command `npm start`
+After the packages are done downloading then you can run the application by running the following command `npm run start`
