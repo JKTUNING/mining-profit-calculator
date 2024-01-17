@@ -1,6 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
-const { scanStart, scanEnd } = require("./config.json");
+const { scanStart, scanEnd, flux_exclude_list } = require("./config.json");
 
 let flux_tx_data = [];
 let total = 0;
@@ -34,25 +34,30 @@ async function fluxTX(address, fluxFileName) {
       timeout: 5000,
     });
     vouts = tx_response?.data?.vout;
-    for (let j = 0; j < vouts.length; j++) {
-      try {
-        if (vouts[j]?.scriptPubKey?.addresses == address && vouts[j]?.value < 75) {
-          flux_tx_price = await findTxPrice(flux_year_pricing, tx_response?.data?.blocktime * 1000);
-          if (flux_tx_price != 1000000) {
-            const date = new Date(tx_response.data.blocktime * 1000);
-            flux_total += vouts[j].value * flux_tx_price;
-            flux_yield += parseFloat(vouts[j].value);
-            console.log(`Processing Transactions ... ${i + 1} of ${flux_tx_data.length}`);
-            stream.write(`${date.toLocaleString()}, ${vouts[j].value}, ${(vouts[j].value * flux_tx_price).toFixed(2)}, ${flux_total.toFixed(2)}\n`);
-            console.log(`Flux Mined - ${vouts[j].value} - USD Value ${(vouts[j].value * flux_tx_price).toFixed(2)} - on ${date.toLocaleDateString()}`);
-          } else {
-            console.log(`Skipping Transaction ... ${i + 1} of ${flux_tx_data.length}`);
+    vin = tx_response?.data?.vin;
+    if (!flux_exclude_list?.includes(vin[0]?.addr) ?? true) {
+      for (let j = 0; j < vouts.length; j++) {
+        try {
+          if (vouts[j]?.scriptPubKey?.addresses.includes(address) && vouts[j]?.value < 7500) {
+            flux_tx_price = await findTxPrice(flux_year_pricing, tx_response?.data?.blocktime * 1000);
+            if (flux_tx_price != 1000000) {
+              const date = new Date(tx_response.data.blocktime * 1000);
+              flux_total += vouts[j].value * flux_tx_price;
+              flux_yield += parseFloat(vouts[j].value);
+              console.log(`Processing Transactions ... ${i + 1} of ${flux_tx_data.length}`);
+              stream.write(`${date.toLocaleString()}, ${vouts[j].value}, ${(vouts[j].value * flux_tx_price).toFixed(2)}, ${flux_total.toFixed(2)}\n`);
+              console.log(`Flux Mined - ${vouts[j].value} - USD Value ${(vouts[j].value * flux_tx_price).toFixed(2)} - on ${date.toLocaleDateString()}`);
+            } else {
+              console.log(`Skipping Transaction ... ${i + 1} of ${flux_tx_data.length}`);
+            }
+            break;
           }
-          break;
+        } catch (error) {
+          console.log(error.message);
         }
-      } catch (error) {
-        console.log(error.message);
       }
+    } else {
+      console.log(`vin address: ${vin[0].addr} part of exclude list`);
     }
   }
   console.log(`Total Flux Yield - ${flux_yield.toFixed(2)}`);

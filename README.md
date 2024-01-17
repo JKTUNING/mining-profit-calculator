@@ -27,6 +27,12 @@ https://currentmillis.com/
       "fluxAddress": "<your 2nd flux address>"
     }
   ],
+  "flux_exclude_list": [
+    "<excluded_address1>",
+    "<excluded_address2>",
+    "<excluded_address3>",
+    "<excluded_address4>"
+  ],
   "scanStart": 1672549200,
   "scanEnd": 1703912400
 }
